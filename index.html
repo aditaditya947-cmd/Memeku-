@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeméKu — Rumah Meme Indonesia</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --surface3: #2a2a38;
+    --border: #33334a;
+    --accent: #ff6b35;
+    --accent2: #ffd166;
+    --blue: #06b6d4;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #a855f7;
+    --text: #f0f0f8;
+    --text2: #9999bb;
+    --text3: #6666aa;
+    --verified: #1d9bf0;
+    --radius: 16px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── NAVBAR ─── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,15,19,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 28px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    cursor: pointer;
+  }
+  .logo span { font-size: 22px; }
+  .nav-tabs {
+    display: flex; gap: 4px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .nav-tab {
+    padding: 8px 18px; border-radius: 8px;
+    cursor: pointer; font-weight: 700; font-size: 14px;
+    color: var(--text2); transition: all 0.2s;
+    border: none; background: none;
+  }
+  .nav-tab.active, .nav-tab:hover {
+    background: var(--surface3);
+    color: var(--text);
+  }
+  .nav-tab.active { color: var(--accent); }
+  .nav-right { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    padding: 9px 20px; border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800; font-size: 14px;
+    cursor: pointer; transition: all 0.2s; border: none;
+  }
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .btn-ghost:hover { background: var(--surface3); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #ff8c5a);
+    color: white;
+    box-shadow: 0 4px 16px rgba(255,107,53,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255,107,53,0.45);
+  }
+  .user-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; cursor: pointer;
+    position: relative;
+  }
+  .verified-badge-sm {
+    position: absolute; bottom: -2px; right: -2px;
+    width: 14px; height: 14px;
+    background: var(--verified);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px;
+  }
+
+  /* ─── LAYOUT ─── */
+  .container {
+    max-width: 1200px; margin: 0 auto;
+    padding: 88px 24px 40px;
+    display: grid;
+    grid-template-columns: 240px 1fr 280px;
+    gap: 24px;
+  }
+
+  /* ─── SIDEBAR LEFT ─── */
+  .sidebar-left { position: sticky; top: 80px; height: fit-content; }
+  .sidebar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .sidebar-title {
+    font-weight: 800; font-size: 12px;
+    color: var(--text3); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .sidebar-menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    cursor: pointer; font-weight: 700; font-size: 14px;
+    color: var(--text2); transition: all 0.2s;
+    margin-bottom: 2px;
+  }
+  .sidebar-menu-item:hover, .sidebar-menu-item.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .sidebar-menu-item.active { color: var(--accent); }
+  .sidebar-menu-item .icon { font-size: 18px; }
+  .category-tag {
+    display: inline-flex; align-items: center;
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 700;
+    background: var(--surface2); color: var(--text2);
+    cursor: pointer; margin: 3px; transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .category-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ─── FEED ─── */
+  .feed { display: flex; flex-direction: column; gap: 20px; }
+
+  /* Upload bar */
+  .upload-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex; gap: 12px; align-items: center;
+  }
+  .upload-input {
+    flex: 1; background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px; color: var(--text2);
+    cursor: pointer; font-weight: 600;
+  }
+  .upload-input:hover { border-color: var(--accent); color: var(--text); }
+
+  /* Sort bar */
+  .sort-bar {
+    display: flex; gap: 8px; align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+  }
+  .sort-btn {
+    padding: 6px 14px; border-radius: 8px;
+    font-weight: 800; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    border: none; background: none;
+    color: var(--text2); font-family: 'Nunito', sans-serif;
+  }
+  .sort-btn.active, .sort-btn:hover {
+    background: var(--surface3);
+    color: var(--accent);
+  }
+
+  /* ─── MEME CARD ─── */
+  .meme-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.25s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .meme-card:hover { border-color: var(--surface3); transform: translateY(-2px); box-shadow: var(--shadow); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .meme-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px;
+  }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; flex-shrink: 0;
+    position: relative; cursor: pointer;
+  }
+  .avatar.verified-ring {
+    outline: 2px solid var(--verified);
+    outline-offset: 2px;
+  }
+  .verified-icon {
+    position: absolute; bottom: -3px; right: -3px;
+    width: 16px; height: 16px;
+    background: var(--verified);
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+  }
+  .meme-meta { flex: 1; }
+  .meme-user {
+    font-weight: 800; font-size: 15px;
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .meme-user:hover { color: var(--accent); }
+  .badge-verified {
+    background: var(--verified);
+    color: white; border-radius: 50%;
+    width: 16px; height: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9px; flex-shrink: 0;
+  }
+  .badge-gold {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: white; border-radius: 4px;
+    padding: 1px 5px; font-size: 10px; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .meme-time { font-size: 12px; color: var(--text3); font-weight: 600; }
+  .meme-more {
+    background: none; border: none; color: var(--text3);
+    cursor: pointer; font-size: 20px; padding: 4px 8px;
+    border-radius: 6px; transition: all 0.2s;
+  }
+  .meme-more:hover { background: var(--surface2); color: var(--text); }
+  .meme-title {
+    padding: 0 16px 12px;
+    font-weight: 800; font-size: 17px; line-height: 1.4;
+    cursor: pointer;
+  }
+  .meme-title:hover { color: var(--accent); }
+  .meme-tags {
+    padding: 0 16px 10px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .tag {
+    background: var(--surface2);
+    color: var(--blue); font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; cursor: pointer;
+  }
+  .tag:hover { background: var(--surface3); }
+  .meme-image {
+    width: 100%; max-height: 520px;
+    object-fit: contain;
+    background: #0a0a0f;
+    cursor: pointer;
+  }
+  .meme-placeholder {
+    width: 100%; height: 280px;
+    background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; cursor: pointer;
+  }
+  .meme-actions {
+    display: flex; align-items: center; gap: 6px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .action-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px;
+    font-weight: 800; font-size: 14px;
+    cursor: pointer; transition: all 0.2s;
+    border: none; background: none;
+    color: var(--text2); font-family: 'Nunito', sans-serif;
+  }
+  .action-btn:hover { background: var(--surface2); }
+  .action-btn.upvoted { color: var(--accent); background: rgba(255,107,53,0.12); }
+  .action-btn.downvoted { color: var(--blue); background: rgba(6,182,212,0.12); }
+  .vote-count {
+    font-weight: 900; font-size: 15px;
+    padding: 8px 12px;
+    color: var(--accent);
+  }
+  .action-sep { flex: 1; }
+  .share-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px;
+    font-weight: 800; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    border: none; background: none;
+    color: var(--text3); font-family: 'Nunito', sans-serif;
+  }
+  .share-btn:hover { color: var(--text2); background: var(--surface2); }
+
+  /* ─── SIDEBAR RIGHT ─── */
+  .sidebar-right { position: sticky; top: 80px; height: fit-content; }
+  .leaderboard-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .leaderboard-item:last-child { border-bottom: none; }
+  .rank {
+    font-weight: 900; font-size: 15px; color: var(--text3);
+    width: 24px; text-align: center;
+  }
+  .rank.gold { color: #f59e0b; }
+  .rank.silver { color: #94a3b8; }
+  .rank.bronze { color: #b45309; }
+  .lb-user { flex: 1; }
+  .lb-name {
+    font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; gap: 5px;
+    cursor: pointer;
+  }
+  .lb-name:hover { color: var(--accent); }
+  .lb-points { font-size: 12px; color: var(--text3); font-weight: 600; }
+  .lb-pts { font-weight: 800; font-size: 14px; color: var(--accent2); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%; max-width: 420px;
+    box-shadow: var(--shadow);
+    animation: modalIn 0.25s ease;
+    position: relative;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 26px; color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; font-weight: 600; }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--surface2); border: none;
+    color: var(--text2); font-size: 20px;
+    width: 36px; height: 36px; border-radius: 8px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--surface3); color: var(--text); }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-weight: 800; font-size: 13px;
+    color: var(--text2); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .form-input {
+    width: 100%; padding: 12px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600;
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--text3); }
+  .form-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #ff8c5a);
+    color: white; border: none; border-radius: 12px;
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 16px;
+    cursor: pointer; transition: all 0.2s; margin-top: 8px;
+    box-shadow: 0 4px 16px rgba(255,107,53,0.3);
+  }
+  .form-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,53,0.45); }
+  .form-alt {
+    text-align: center; margin-top: 16px;
+    font-size: 14px; color: var(--text2); font-weight: 600;
+  }
+  .form-alt a { color: var(--accent); cursor: pointer; font-weight: 800; }
+  .form-error {
+    color: var(--red); font-size: 13px; font-weight: 700;
+    margin-top: 8px; display: none;
+  }
+  .form-error.show { display: block; }
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 16px 0; color: var(--text3); font-size: 13px; font-weight: 700;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ─── UPLOAD MODAL ─── */
+  .upload-area {
+    border: 2px dashed var(--border); border-radius: 12px;
+    padding: 32px; text-align: center;
+    cursor: pointer; transition: all 0.2s;
+    margin-bottom: 16px;
+  }
+  .upload-area:hover, .upload-area.drag { border-color: var(--accent); background: rgba(255,107,53,0.05); }
+  .upload-icon { font-size: 40px; margin-bottom: 8px; }
+  .upload-text { font-weight: 700; color: var(--text2); font-size: 14px; }
+  .upload-sub { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 4px; }
+  .preview-img {
+    width: 100%; max-height: 200px; object-fit: contain;
+    border-radius: 10px; margin-bottom: 16px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+
+  /* ─── USER DROPDOWN ─── */
+  .user-menu {
+    position: fixed; top: 68px; right: 20px; z-index: 150;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 8px;
+    min-width: 200px;
+    box-shadow: var(--shadow);
+    display: none;
+    animation: modalIn 0.2s ease;
+  }
+  .user-menu.open { display: block; }
+  .user-menu-header {
+    padding: 10px 12px 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .user-menu-name {
+    font-weight: 800; font-size: 15px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .user-menu-email { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+  .user-menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    cursor: pointer; font-weight: 700; font-size: 14px;
+    color: var(--text2); transition: all 0.2s;
+  }
+  .user-menu-item:hover { background: var(--surface2); color: var(--text); }
+  .user-menu-item.danger { color: var(--red); }
+  .user-menu-item.danger:hover { background: rgba(239,68,68,0.1); }
+  .user-menu-sep { height: 1px; background: var(--border); margin: 6px 0; }
+
+  /* ─── VERIFIED BADGE REQUEST ─── */
+  .verified-section {
+    background: linear-gradient(135deg, rgba(29,155,240,0.1), rgba(168,85,247,0.08));
+    border: 1px solid rgba(29,155,240,0.3);
+    border-radius: 14px; padding: 18px;
+  }
+  .verified-title {
+    font-weight: 900; font-size: 16px;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .verified-desc { font-size: 13px; color: var(--text2); font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
+  .requirements { margin-bottom: 14px; }
+  .req-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2); font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .req-check { color: var(--green); font-size: 14px; }
+  .req-x { color: var(--red); font-size: 14px; }
+  .btn-verified {
+    width: 100%; padding: 10px;
+    background: var(--verified);
+    color: white; border: none; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-verified:hover { background: #0f8ce0; }
+  .btn-verified:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    z-index: 999;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 24px;
+    border-radius: 12px; font-weight: 700; font-size: 14px;
+    box-shadow: var(--shadow);
+    opacity: 0; transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+  #toast.success { border-color: var(--green); color: var(--green); }
+  #toast.error { border-color: var(--red); color: var(--red); }
+
+  /* ─── LOADING ─── */
+  .loader {
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px; color: var(--text3); font-weight: 700; font-size: 15px;
+    gap: 12px;
+  }
+  .spin {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── COMMENT SECTION ─── */
+  .comments-section {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .comments-section.open { display: block; }
+  .comment-input-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .comment-input {
+    flex: 1; padding: 10px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
+    outline: none; resize: none; transition: border-color 0.2s;
+    min-height: 40px;
+  }
+  .comment-input:focus { border-color: var(--accent); }
+  .comment-send {
+    padding: 10px 16px; background: var(--accent);
+    color: white; border: none; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .comment-send:hover { background: #ff8c5a; }
+  .comment-item {
+    display: flex; gap: 10px; margin-bottom: 12px;
+    animation: fadeUp 0.3s ease;
+  }
+  .comment-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .comment-body { flex: 1; }
+  .comment-user {
+    font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; margin-bottom: 3px;
+  }
+  .comment-text { font-size: 14px; color: var(--text2); font-weight: 600; line-height: 1.4; }
+  .comment-time { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 3px; }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    .sidebar-left, .sidebar-right { display: none; }
+    .nav-tabs { display: none; }
+  }
+  @media (max-width: 480px) {
+    .navbar { padding: 0 16px; }
+    .container { padding: 76px 12px 24px; }
+  }
+
+  /* Pulse verified */
+  @keyframes pulse-blue {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29,155,240,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(29,155,240,0); }
+  }
+  .verified-ring { animation: pulse-blue 2s infinite; }
+
+  /* Empty state */
+  .empty {
+    text-align: center; padding: 48px 24px;
+    color: var(--text3); font-weight: 700;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 16px; }
+  .empty-sub { font-size: 14px; margin-top: 6px; color: var(--text3); }
+
+  /* ─── UPLOAD TABS ─── */
+  .upload-tab {
+    flex: 1; padding: 9px 10px; border-radius: 9px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
+    cursor: pointer; border: none; background: none;
+    color: var(--text2); transition: all 0.2s;
+  }
+  .upload-tab.active { background: var(--surface3); color: var(--accent); }
+  .upload-tab:hover { background: var(--surface3); }
+
+  /* BG COLOR OPTIONS */
+  .bg-color-opt {
+    width: 30px; height: 30px; border-radius: 8px;
+    cursor: pointer; border: 2px solid transparent;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .bg-color-opt.active { border-color: var(--accent); transform: scale(1.15); }
+  .bg-color-opt:hover { transform: scale(1.1); }
+
+  /* TXT SIZE */
+  .txt-size-btn {
+    padding: 6px 16px; border-radius: 8px;
+    font-family: 'Nunito', sans-serif; font-weight: 900;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text2);
+    transition: all 0.2s;
+  }
+  .txt-size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* QUICK EMOJI */
+  .quick-emoji {
+    padding: 5px 8px; border-radius: 8px;
+    background: var(--surface2); cursor: pointer;
+    font-size: 18px; transition: all 0.15s;
+    user-select: none;
+  }
+  .quick-emoji:hover { background: var(--surface3); transform: scale(1.15); }
+
+  /* TEXT MEME CARD */
+  .text-meme-body {
+    min-height: 180px; display: flex; align-items: center; justify-content: center;
+    padding: 24px; text-align: center;
+    font-weight: 800; word-break: break-word; white-space: pre-wrap;
+    font-family: 'Nunito', sans-serif; line-height: 1.5;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo" onclick="scrollToTop()">Memé<span>Ku</span> 🔥</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="setSort('hot',this)">🔥 Hot</button>
+    <button class="nav-tab" onclick="setSort('new',this)">✨ Baru</button>
+    <button class="nav-tab" onclick="setSort('top',this)">🏆 Top</button>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="btn btn-ghost" onclick="openModal('login')">Masuk</button>
+    <button class="btn btn-primary" onclick="openModal('register')">Daftar</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+  <!-- SIDEBAR LEFT -->
+  <aside class="sidebar-left">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Menu</div>
+      <div class="sidebar-menu-item active" onclick="setSort('hot',null)"><span class="icon">🔥</span> Hot</div>
+      <div class="sidebar-menu-item" onclick="setSort('new',null)"><span class="icon">✨</span> Terbaru</div>
+      <div class="sidebar-menu-item" onclick="setSort('top',null)"><span class="icon">🏆</span> Top Minggu</div>
+      <div class="sidebar-menu-item" onclick="setSort('saved',null)"><span class="icon">🔖</span> Tersimpan</div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">Kategori</div>
+      <div style="display:flex;flex-wrap:wrap;">
+        <div class="category-tag" onclick="filterCategory('Komedi')">😂 Komedi</div>
+        <div class="category-tag" onclick="filterCategory('Gaming')">🎮 Gaming</div>
+        <div class="category-tag" onclick="filterCategory('Anime')">⛩️ Anime</div>
+        <div class="category-tag" onclick="filterCategory('Politik')">🏛️ Politik</div>
+        <div class="category-tag" onclick="filterCategory('Olahraga')">⚽ Olahraga</div>
+        <div class="category-tag" onclick="filterCategory('Teknologi')">💻 Teknologi</div>
+        <div class="category-tag" onclick="filterCategory('Random')">🎲 Random</div>
+        <div class="category-tag" onclick="filterCategory('Bucin')">💕 Bucin</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- FEED -->
+  <main class="feed" id="feed">
+    <!-- Upload Bar -->
+    <div class="upload-bar" id="uploadBar" style="display:none;">
+      <div class="upload-input" onclick="openModal('upload')">📸 Share meme-mu ke dunia...</div>
+      <button class="btn btn-primary" onclick="openModal('upload')">Upload</button>
+    </div>
+
+    <!-- Sort Bar -->
+    <div class="sort-bar">
+      <span style="font-weight:800;font-size:13px;color:var(--text3);">Sort:</span>
+      <button class="sort-btn active" onclick="setSort('hot',this)">🔥 Hot</button>
+      <button class="sort-btn" onclick="setSort('new',this)">✨ Terbaru</button>
+      <button class="sort-btn" onclick="setSort('top',this)">🏆 Top</button>
+    </div>
+
+    <!-- Meme list -->
+    <div id="memeList">
+      <div class="loader"><div class="spin"></div> Memuat meme...</div>
+    </div>
+  </main>
+
+  <!-- SIDEBAR RIGHT -->
+  <aside class="sidebar-right">
+    <div class="sidebar-card">
+      <div class="sidebar-title">🏆 Leaderboard</div>
+      <div id="leaderboard"><div class="loader"><div class="spin"></div></div></div>
+    </div>
+    <div class="sidebar-card" id="verifiedSection" style="display:none;">
+      <div class="verified-section">
+        <div class="verified-title">✅ Centang Biru <span style="font-size:18px;">💙</span></div>
+        <div class="verified-desc">Dapatkan badge verified dan tingkatkan kredibilitasmu di MeméKu!</div>
+        <div class="requirements" id="reqList"></div>
+        <button class="btn-verified" id="verifiedBtn" onclick="requestVerified()">Ajukan Verifikasi</button>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">📊 Stats Hari Ini</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--text2);font-weight:700;">Total Meme</span>
+          <span id="statTotal" style="font-weight:900;font-size:16px;color:var(--accent);">-</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--text2);font-weight:700;">Online Hari Ini</span>
+          <span id="statOnline" style="font-weight:900;font-size:16px;color:var(--green);">-</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--text2);font-weight:700;">Total Votes</span>
+          <span id="statVotes" style="font-weight:900;font-size:16px;color:var(--accent2);">-</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- USER DROPDOWN -->
+<div class="user-menu" id="userMenu">
+  <div class="user-menu-header">
+    <div class="user-menu-name" id="menuName">-</div>
+    <div class="user-menu-email" id="menuEmail">-</div>
+  </div>
+  <div class="user-menu-item" onclick="openModal('upload')">📸 Upload Meme</div>
+  <div class="user-menu-item" onclick="openProfile()">👤 Profil Saya</div>
+  <div class="user-menu-sep"></div>
+  <div class="user-menu-item danger" onclick="signOutUser()">🚪 Keluar</div>
+</div>
+
+<!-- ─── MODALS ─── -->
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="modalLogin">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <div class="modal-title">Selamat Datang 👋</div>
+    <div class="modal-sub">Masuk ke akun MeméKu-mu</div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="loginEmail" placeholder="kamu@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-error" id="loginError"></div>
+    <button class="form-btn" onclick="doLogin()">Masuk 🚀</button>
+    <div class="form-alt">Belum punya akun? <a onclick="switchModal('login','register')">Daftar sekarang</a></div>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="modalRegister">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register')">✕</button>
+    <div class="modal-title">Buat Akun 🎉</div>
+    <div class="modal-sub">Bergabunglah dengan komunitas MeméKu</div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" type="text" id="regUsername" placeholder="username_keren">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="regEmail" placeholder="kamu@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="regPass" placeholder="Min. 6 karakter" onkeydown="if(event.key==='Enter')doRegister()">
+    </div>
+    <div class="form-error" id="regError"></div>
+    <button class="form-btn" onclick="doRegister()">Daftar Gratis 🎊</button>
+    <div class="form-alt">Sudah punya akun? <a onclick="switchModal('register','login')">Masuk</a></div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="modalUpload">
+  <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('upload')">✕</button>
+    <div class="modal-title">Buat Meme 🔥</div>
+    <div class="modal-sub">Bagikan kelucuanmu ke semua orang</div>
+    <!-- TAB SWITCHER -->
+    <div style="display:flex;gap:6px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:20px;">
+      <button class="upload-tab active" id="tabImg" onclick="switchUploadTab('img')">🖼️ Gambar</button>
+      <button class="upload-tab" id="tabText" onclick="switchUploadTab('text')">✍️ Teks / Emoji</button>
+    </div>
+    <!-- IMAGE TAB -->
+    <div id="panelImg">
+      <img id="previewImg" class="preview-img" src="" alt="preview">
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event)" ondrop="handleDrop(event)">
+        <div class="upload-icon">🖼️</div>
+        <div class="upload-text">Klik atau seret gambar ke sini</div>
+        <div class="upload-sub">PNG, JPG, GIF, WEBP — maks 10MB</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+    </div>
+    <!-- TEXT TAB -->
+    <div id="panelText" style="display:none;">
+      <div style="margin-bottom:12px;">
+        <label class="form-label">Isi Meme (teks, emoji, kaomoji...)</label>
+        <textarea class="form-input" id="uploadTextContent" rows="5" placeholder="Contoh:&#10;Pas disuruh kerja: 😭😭&#10;Pas udah waktunya pulang: 🚀🚀🚀&#10;&#10;Atau kaomoji: (╯°□°）╯︵ ┻━┻" style="resize:vertical;font-size:16px;line-height:1.6;"></textarea>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="form-label">Warna Background</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="bgColorPicker">
+          <div class="bg-color-opt active" data-color="#1a1a22" style="background:#1a1a22;" onclick="selectBgColor(this,'#1a1a22')"></div>
+          <div class="bg-color-opt" data-color="#0f172a" style="background:#0f172a;" onclick="selectBgColor(this,'#0f172a')"></div>
+          <div class="bg-color-opt" data-color="#1e1b4b" style="background:#1e1b4b;" onclick="selectBgColor(this,'#1e1b4b')"></div>
+          <div class="bg-color-opt" data-color="#1a0a2e" style="background:#1a0a2e;" onclick="selectBgColor(this,'#1a0a2e')"></div>
+          <div class="bg-color-opt" data-color="#0a1628" style="background:#0a1628;" onclick="selectBgColor(this,'#0a1628')"></div>
+          <div class="bg-color-opt" data-color="linear-gradient(135deg,#ff6b35,#a855f7)" style="background:linear-gradient(135deg,#ff6b35,#a855f7);" onclick="selectBgColor(this,'linear-gradient(135deg,#ff6b35,#a855f7)')"></div>
+          <div class="bg-color-opt" data-color="linear-gradient(135deg,#06b6d4,#22c55e)" style="background:linear-gradient(135deg,#06b6d4,#22c55e);" onclick="selectBgColor(this,'linear-gradient(135deg,#06b6d4,#22c55e)')"></div>
+          <div class="bg-color-opt" data-color="linear-gradient(135deg,#f59e0b,#ef4444)" style="background:linear-gradient(135deg,#f59e0b,#ef4444);" onclick="selectBgColor(this,'linear-gradient(135deg,#f59e0b,#ef4444)')"></div>
+          <div class="bg-color-opt" data-color="linear-gradient(135deg,#1d9bf0,#a855f7)" style="background:linear-gradient(135deg,#1d9bf0,#a855f7);" onclick="selectBgColor(this,'linear-gradient(135deg,#1d9bf0,#a855f7)')"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="form-label">Ukuran Teks</label>
+        <div style="display:flex;gap:6px;">
+          <button class="txt-size-btn active" onclick="selectTxtSize(this,'24px')">S</button>
+          <button class="txt-size-btn" onclick="selectTxtSize(this,'32px')">M</button>
+          <button class="txt-size-btn" onclick="selectTxtSize(this,'42px')">L</button>
+          <button class="txt-size-btn" onclick="selectTxtSize(this,'56px')">XL</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="form-label">Preview</label>
+        <div id="textMemePreview" style="min-height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;font-weight:800;word-break:break-word;white-space:pre-wrap;font-family:'Nunito',sans-serif;transition:all 0.3s;border:1px solid var(--border);background:#1a1a22;font-size:24px;"></div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="form-label">Emoji Cepat</label>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          <span class="quick-emoji" onclick="insertEmoji('😂')">😂</span>
+          <span class="quick-emoji" onclick="insertEmoji('💀')">💀</span>
+          <span class="quick-emoji" onclick="insertEmoji('🔥')">🔥</span>
+          <span class="quick-emoji" onclick="insertEmoji('😭')">😭</span>
+          <span class="quick-emoji" onclick="insertEmoji('🥲')">🥲</span>
+          <span class="quick-emoji" onclick="insertEmoji('🤣')">🤣</span>
+          <span class="quick-emoji" onclick="insertEmoji('😤')">😤</span>
+          <span class="quick-emoji" onclick="insertEmoji('🙃')">🙃</span>
+          <span class="quick-emoji" onclick="insertEmoji('💯')">💯</span>
+          <span class="quick-emoji" onclick="insertEmoji('👀')">👀</span>
+          <span class="quick-emoji" onclick="insertEmoji('🫡')">🫡</span>
+          <span class="quick-emoji" onclick="insertEmoji('🗿')">🗿</span>
+          <span class="quick-emoji" onclick="insertEmoji('🤡')">🤡</span>
+          <span class="quick-emoji" onclick="insertEmoji('💸')">💸</span>
+          <span class="quick-emoji" onclick="insertEmoji('🚀')">🚀</span>
+          <span class="quick-emoji" onclick="insertEmoji('(╯°□°）╯︵ ┻━┻')">(╯°□°）╯</span>
+          <span class="quick-emoji" onclick="insertEmoji('(•_•)')">•_•</span>
+          <span class="quick-emoji" onclick="insertEmoji('ʕ•ᴥ•ʔ')">ʕ•ᴥ•ʔ</span>
+        </div>
+      </div>
+    </div>
+    <!-- SHARED FIELDS -->
+    <div class="form-group">
+      <label class="form-label">Judul / Caption</label>
+      <input class="form-input" type="text" id="uploadTitle" placeholder="Tulis caption yang lucu...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategori</label>
+      <select class="form-input" id="uploadCategory" style="cursor:pointer;">
+        <option value="Komedi">😂 Komedi</option>
+        <option value="Gaming">🎮 Gaming</option>
+        <option value="Anime">⛩️ Anime</option>
+        <option value="Politik">🏛️ Politik</option>
+        <option value="Olahraga">⚽ Olahraga</option>
+        <option value="Teknologi">💻 Teknologi</option>
+        <option value="Bucin">💕 Bucin</option>
+        <option value="Random">🎲 Random</option>
+      </select>
+    </div>
+    <div class="form-error" id="uploadError"></div>
+    <button class="form-btn" id="uploadBtn" onclick="doUpload()">Upload Meme 🚀</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, increment, getDoc, setDoc, query, orderBy, limit, onSnapshot, serverTimestamp, where, runTransaction } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDR9DF5Ee2G9ttmyom6IlLeYrhSjLoJcW0",
+  authDomain: "database-m-af977.firebaseapp.com",
+  databaseURL: "https://database-m-af977-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "database-m-af977",
+  storageBucket: "database-m-af977.firebasestorage.app",
+  messagingSenderId: "613630938721",
+  appId: "1:613630938721:web:5e7a2ce128b95a50bd2420",
+  measurementId: "G-1DQNJYMW0L"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// ── STATE ──
+let currentUser = null;
+let currentUserData = null;
+let currentSort = 'hot';
+let uploadFile = null;
+let memeVotes = {}; // track user votes locally
+
+// ── AUTH STATE ──
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (user) {
+    const uRef = doc(db, 'users', user.uid);
+    const uSnap = await getDoc(uRef);
+    if (uSnap.exists()) {
+      currentUserData = uSnap.data();
+    } else {
+      // Create user doc
+      const userData = {
+        uid: user.uid,
+        username: user.displayName || user.email.split('@')[0],
+        email: user.email,
+        createdAt: serverTimestamp(),
+        memeCount: 0,
+        totalVotes: 0,
+        verified: false,
+        verificationStatus: 'none', // none | pending | approved | rejected
+        avatar: user.displayName ? user.displayName[0].toUpperCase() : '?'
+      };
+      await setDoc(uRef, userData);
+      currentUserData = userData;
+    }
+    renderNavLoggedIn();
+    document.getElementById('uploadBar').style.display = 'flex';
+    showVerifiedSection();
+  } else {
+    currentUserData = null;
+    renderNavLoggedOut();
+    document.getElementById('uploadBar').style.display = 'none';
+    document.getElementById('verifiedSection').style.display = 'none';
+  }
+  loadMemes();
+  loadLeaderboard();
+  loadStats();
+});
+
+// ── NAV ──
+function renderNavLoggedIn() {
+  const initials = currentUserData?.username?.[0]?.toUpperCase() || currentUser.email[0].toUpperCase();
+  const verified = currentUserData?.verified;
+  const navRight = document.getElementById('navRight');
+  navRight.innerHTML = `
+    <div class="user-avatar ${verified ? 'verified-ring' : ''}" onclick="toggleUserMenu(event)">
+      ${initials}
+      ${verified ? '<div class="verified-badge-sm">✓</div>' : ''}
+    </div>
+  `;
+  document.getElementById('menuName').innerHTML = `
+    ${currentUserData?.username || 'User'}
+    ${verified ? '<span class="badge-verified">✓</span>' : ''}
+  `;
+  document.getElementById('menuEmail').textContent = currentUser.email;
+}
+function renderNavLoggedOut() {
+  document.getElementById('navRight').innerHTML = `
+    <button class="btn btn-ghost" onclick="openModal('login')">Masuk</button>
+    <button class="btn btn-primary" onclick="openModal('register')">Daftar</button>
+  `;
+}
+window.toggleUserMenu = (e) => {
+  e.stopPropagation();
+  document.getElementById('userMenu').classList.toggle('open');
+};
+document.addEventListener('click', () => document.getElementById('userMenu').classList.remove('open'));
+
+// ── VERIFIED SECTION ──
+async function showVerifiedSection() {
+  if (!currentUser || !currentUserData) return;
+  const section = document.getElementById('verifiedSection');
+  section.style.display = 'block';
+  const memeCount = currentUserData.memeCount || 0;
+  const votes = currentUserData.totalVotes || 0;
+  const status = currentUserData.verificationStatus || 'none';
+  const verified = currentUserData.verified || false;
+  const req1 = memeCount >= 5;
+  const req2 = votes >= 50;
+  const reqList = document.getElementById('reqList');
+  reqList.innerHTML = `
+    <div class="req-item"><span class="${req1?'req-check':'req-x'}">${req1?'✅':'❌'}</span> Upload min. 5 meme (${memeCount}/5)</div>
+    <div class="req-item"><span class="${req2?'req-check':'req-x'}">${req2?'✅':'❌'}</span> Raih min. 50 votes (${votes}/50)</div>
+  `;
+  const btn = document.getElementById('verifiedBtn');
+  if (verified) {
+    btn.textContent = '✅ Sudah Terverifikasi';
+    btn.disabled = true;
+  } else if (status === 'pending') {
+    btn.textContent = '⏳ Menunggu Review Admin';
+    btn.disabled = true;
+  } else if (status === 'rejected') {
+    btn.textContent = '❌ Ditolak - Coba Lagi';
+    btn.disabled = !(req1 && req2);
+  } else {
+    btn.disabled = !(req1 && req2);
+    btn.textContent = (req1 && req2) ? '🚀 Ajukan Verifikasi' : '🔒 Belum Memenuhi Syarat';
+  }
+}
+window.requestVerified = async () => {
+  if (!currentUser) return;
+  const btn = document.getElementById('verifiedBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Mengirim...';
+  try {
+    await updateDoc(doc(db, 'users', currentUser.uid), {
+      verificationStatus: 'pending',
+      verificationRequestAt: serverTimestamp()
+    });
+    await addDoc(collection(db, 'verificationRequests'), {
+      uid: currentUser.uid,
+      username: currentUserData.username,
+      email: currentUser.email,
+      memeCount: currentUserData.memeCount || 0,
+      totalVotes: currentUserData.totalVotes || 0,
+      status: 'pending',
+      requestedAt: serverTimestamp()
+    });
+    currentUserData.verificationStatus = 'pending';
+    showToast('✅ Pengajuan verifikasi terkirim! Admin akan mereview segera.', 'success');
+    showVerifiedSection();
+  } catch(e) {
+    showToast('Gagal mengajukan verifikasi', 'error');
+    btn.disabled = false;
+    btn.textContent = '🚀 Ajukan Verifikasi';
+  }
+};
+
+// ── AUTH ACTIONS ──
+window.doLogin = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  err.classList.remove('show');
+  if (!email || !pass) { err.textContent = 'Isi semua field ya!'; err.classList.add('show'); return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    closeModal('login');
+    showToast('Selamat datang kembali! 👋', 'success');
+  } catch(e) {
+    const msgs = { 'auth/wrong-password':'Password salah!', 'auth/user-not-found':'Email tidak ditemukan!', 'auth/invalid-credential':'Email atau password salah!' };
+    err.textContent = msgs[e.code] || 'Gagal masuk. Coba lagi.';
+    err.classList.add('show');
+  }
+};
+window.doRegister = async () => {
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const err = document.getElementById('regError');
+  err.classList.remove('show');
+  if (!username || !email || !pass) { err.textContent = 'Isi semua field ya!'; err.classList.add('show'); return; }
+  if (username.length < 3) { err.textContent = 'Username min. 3 karakter!'; err.classList.add('show'); return; }
+  if (pass.length < 6) { err.textContent = 'Password min. 6 karakter!'; err.classList.add('show'); return; }
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: username });
+    // setDoc handled in onAuthStateChanged
+    closeModal('register');
+    showToast('Akun berhasil dibuat! 🎉', 'success');
+  } catch(e) {
+    const msgs = { 'auth/email-already-in-use':'Email sudah dipakai!', 'auth/weak-password':'Password terlalu lemah!' };
+    err.textContent = msgs[e.code] || 'Gagal daftar. Coba lagi.';
+    err.classList.add('show');
+  }
+};
+window.signOutUser = async () => {
+  await signOut(auth);
+  document.getElementById('userMenu').classList.remove('open');
+  showToast('Sampai jumpa! 👋');
+};
+
+// ── FILE UPLOAD ──
+// ── UPLOAD TAB STATE ──
+let uploadMode = 'img'; // 'img' | 'text'
+let selectedBgColor = '#1a1a22';
+let selectedTxtSize = '24px';
+
+window.switchUploadTab = (tab) => {
+  uploadMode = tab;
+  document.getElementById('panelImg').style.display = tab === 'img' ? 'block' : 'none';
+  document.getElementById('panelText').style.display = tab === 'text' ? 'block' : 'none';
+  document.getElementById('tabImg').classList.toggle('active', tab === 'img');
+  document.getElementById('tabText').classList.toggle('active', tab === 'text');
+};
+
+window.selectBgColor = (el, color) => {
+  selectedBgColor = color;
+  document.querySelectorAll('.bg-color-opt').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  updateTextPreview();
+};
+
+window.selectTxtSize = (el, size) => {
+  selectedTxtSize = size;
+  document.querySelectorAll('.txt-size-btn').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  updateTextPreview();
+};
+
+window.insertEmoji = (emoji) => {
+  const ta = document.getElementById('uploadTextContent');
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  const val = ta.value;
+  ta.value = val.slice(0, start) + emoji + val.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + emoji.length;
+  ta.focus();
+  updateTextPreview();
+};
+
+function updateTextPreview() {
+  const preview = document.getElementById('textMemePreview');
+  if (!preview) return;
+  const text = document.getElementById('uploadTextContent')?.value || '';
+  preview.style.background = selectedBgColor;
+  preview.style.fontSize = selectedTxtSize;
+  preview.style.color = selectedBgColor.includes('gradient') ? 'white' : '#f0f0f8';
+  preview.textContent = text || 'Preview akan muncul di sini...';
+}
+
+// Auto-update preview on typing
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'uploadTextContent') updateTextPreview();
+});
+
+window.handleFile = (e) => {
+  const file = e.target.files[0];
+  if (file) previewFile(file);
+};
+window.handleDrag = (e) => { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag'); };
+window.handleDrop = (e) => {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) previewFile(file);
+};
+function previewFile(file) {
+  uploadFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = document.getElementById('previewImg');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadArea').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+window.doUpload = async () => {
+  if (!currentUser) { openModal('login'); return; }
+  const title = document.getElementById('uploadTitle').value.trim();
+  const category = document.getElementById('uploadCategory').value;
+  const err = document.getElementById('uploadError');
+  err.classList.remove('show');
+  if (!title) { err.textContent = 'Tulis judul meme-mu!'; err.classList.add('show'); return; }
+
+  const btn = document.getElementById('uploadBtn');
+  btn.textContent = '⏳ Mengupload...';
+  btn.disabled = true;
+
+  try {
+    let memeData = {
+      title, category,
+      authorId: currentUser.uid,
+      authorName: currentUserData.username || currentUser.email.split('@')[0],
+      authorVerified: currentUserData.verified || false,
+      upvotes: 0, downvotes: 0, comments: 0, score: 0,
+      createdAt: serverTimestamp(),
+      type: uploadMode
+    };
+
+    if (uploadMode === 'img') {
+      if (!uploadFile) { err.textContent = 'Pilih gambar dulu!'; err.classList.add('show'); btn.textContent = 'Upload Meme 🚀'; btn.disabled = false; return; }
+      const storageRef = ref(storage, `memes/${currentUser.uid}/${Date.now()}_${uploadFile.name}`);
+      await uploadBytes(storageRef, uploadFile);
+      memeData.imageUrl = await getDownloadURL(storageRef);
+    } else {
+      const textContent = document.getElementById('uploadTextContent').value.trim();
+      if (!textContent) { err.textContent = 'Tulis isi meme-mu!'; err.classList.add('show'); btn.textContent = 'Upload Meme 🚀'; btn.disabled = false; return; }
+      memeData.textContent = textContent;
+      memeData.bgColor = selectedBgColor;
+      memeData.txtSize = selectedTxtSize;
+    }
+
+    await addDoc(collection(db, 'memes'), memeData);
+    await updateDoc(doc(db, 'users', currentUser.uid), { memeCount: increment(1) });
+
+    closeModal('upload');
+    showToast('Meme berhasil diupload! 🚀', 'success');
+    // reset
+    uploadFile = null;
+    document.getElementById('previewImg').style.display = 'none';
+    document.getElementById('uploadArea').style.display = 'block';
+    document.getElementById('uploadTitle').value = '';
+    document.getElementById('uploadTextContent').value = '';
+    document.getElementById('textMemePreview').textContent = '';
+    uploadMode = 'img';
+    switchUploadTab('img');
+    loadMemes();
+  } catch(e) {
+    err.textContent = 'Gagal upload: ' + e.message;
+    err.classList.add('show');
+  } finally {
+    btn.textContent = 'Upload Meme 🚀';
+    btn.disabled = false;
+  }
+};
+
+// ── LOAD MEMES ──
+async function loadMemes() {
+  const list = document.getElementById('memeList');
+  list.innerHTML = '<div class="loader"><div class="spin"></div> Memuat meme...</div>';
+  try {
+    let q;
+    if (currentSort === 'new') {
+      q = query(collection(db, 'memes'), orderBy('createdAt', 'desc'), limit(20));
+    } else if (currentSort === 'top') {
+      q = query(collection(db, 'memes'), orderBy('upvotes', 'desc'), limit(20));
+    } else {
+      q = query(collection(db, 'memes'), orderBy('score', 'desc'), limit(20));
+    }
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      list.innerHTML = '<div class="empty"><div class="empty-icon">🫙</div><div class="empty-text">Belum ada meme nih</div><div class="empty-sub">Jadilah yang pertama upload!</div></div>';
+      return;
+    }
+    list.innerHTML = '';
+    snap.forEach(docSnap => {
+      list.appendChild(renderMemeCard(docSnap.id, docSnap.data()));
+    });
+    updateStats(snap.size);
+  } catch(e) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Gagal memuat meme</div><div class="empty-sub">${e.message}</div></div>`;
+  }
+}
+
+function renderMemeCard(id, data) {
+  const div = document.createElement('div');
+  div.className = 'meme-card';
+  div.style.animationDelay = Math.random() * 0.2 + 's';
+  const initials = data.authorName?.[0]?.toUpperCase() || '?';
+  const timeAgo = getTimeAgo(data.createdAt?.toDate?.() || new Date());
+  const score = (data.upvotes || 0) - (data.downvotes || 0);
+  const userVote = memeVotes[id] || null;
+  const colors = ['135deg, #06b6d4, #a855f7','135deg, #f59e0b, #ef4444','135deg, #22c55e, #06b6d4','135deg, #a855f7, #ff6b35','135deg, #ef4444, #f59e0b'];
+  const color = colors[data.authorName?.length % colors.length] || colors[0];
+  div.innerHTML = `
+    <div class="meme-header">
+      <div class="avatar ${data.authorVerified ? 'verified-ring' : ''}" style="background:linear-gradient(${color})">
+        ${initials}
+        ${data.authorVerified ? '<div class="verified-icon">✓</div>' : ''}
+      </div>
+      <div class="meme-meta">
+        <div class="meme-user">
+          ${data.authorName || 'Anonymous'}
+          ${data.authorVerified ? '<span class="badge-verified" title="Akun Terverifikasi">✓</span>' : ''}
+        </div>
+        <div class="meme-time">📍 ${data.category || 'Random'} · ${timeAgo}</div>
+      </div>
+      <button class="meme-more">···</button>
+    </div>
+    <div class="meme-title">${escHtml(data.title)}</div>
+    <div class="meme-tags"><span class="tag">#${data.category || 'Random'}</span></div>
+    ${data.type === 'text' || (!data.imageUrl && data.textContent)
+      ? `<div class="text-meme-body" style="background:${data.bgColor||'#1a1a22'};font-size:${data.txtSize||'24px'};color:${(data.bgColor||'').includes('gradient')?'white':'#f0f0f8'};">${escHtml(data.textContent||'')}</div>`
+      : data.imageUrl
+        ? `<img class="meme-image" src="${data.imageUrl}" alt="${escHtml(data.title)}" loading="lazy">`
+        : `<div class="meme-placeholder">🖼️</div>`
+    }
+    <div class="meme-actions">
+      <button class="action-btn ${userVote==='up'?'upvoted':''}" onclick="vote('${id}','up',this,event)" title="Upvote">
+        🔥 <span id="up_${id}">${data.upvotes||0}</span>
+      </button>
+      <span class="vote-count" id="score_${id}" style="color:${score>=0?'var(--accent)':'var(--blue)'}">${score>0?'+':''}${score}</span>
+      <button class="action-btn ${userVote==='down'?'downvoted':''}" onclick="vote('${id}','down',this,event)" title="Downvote">
+        💧 <span id="dn_${id}">${data.downvotes||0}</span>
+      </button>
+      <div class="action-sep"></div>
+      <button class="action-btn" onclick="toggleComments('${id}',this)">
+        💬 <span id="cmt_${id}">${data.comments||0}</span>
+      </button>
+      <button class="share-btn" onclick="shareMeme('${id}','${escHtml(data.title)}')">📤 Share</button>
+    </div>
+    <div class="comments-section" id="comments_${id}">
+      <div class="comment-input-row">
+        <textarea class="comment-input" id="cinput_${id}" placeholder="Tulis komentar..." rows="1"></textarea>
+        <button class="comment-send" onclick="sendComment('${id}')">Kirim</button>
+      </div>
+      <div id="clist_${id}"></div>
+    </div>
+  `;
+  return div;
+}
+
+// ── VOTE ──
+window.vote = async (memeId, dir, btn, e) => {
+  e.stopPropagation();
+  if (!currentUser) { showToast('Login dulu untuk vote!', 'error'); openModal('login'); return; }
+  const prevVote = memeVotes[memeId] || null;
+  if (prevVote === dir) {
+    showToast('Sudah vote!'); return;
+  }
+  memeVotes[memeId] = dir;
+  try {
+    const mRef = doc(db, 'memes', memeId);
+    const mSnap = await getDoc(mRef);
+    if (!mSnap.exists()) return;
+    const data = mSnap.data();
+    let upD = 0, dnD = 0;
+    if (dir === 'up') { upD = 1; if (prevVote==='down') dnD = -1; }
+    else { dnD = 1; if (prevVote==='up') upD = -1; }
+    const newUp = Math.max(0, (data.upvotes||0) + upD);
+    const newDn = Math.max(0, (data.downvotes||0) + dnD);
+    const newScore = newUp - newDn;
+    await updateDoc(mRef, { upvotes: newUp, downvotes: newDn, score: newScore });
+    // Update UI
+    document.getElementById(`up_${memeId}`).textContent = newUp;
+    document.getElementById(`dn_${memeId}`).textContent = newDn;
+    const scoreEl = document.getElementById(`score_${memeId}`);
+    scoreEl.textContent = (newScore>0?'+':'') + newScore;
+    scoreEl.style.color = newScore>=0 ? 'var(--accent)' : 'var(--blue)';
+    // Refresh button states
+    const card = btn.closest('.meme-card');
+    card.querySelectorAll('.action-btn').forEach(b => { b.classList.remove('upvoted','downvoted'); });
+    if (dir==='up') btn.classList.add('upvoted');
+    else btn.classList.add('downvoted');
+    // Update author votes
+    await updateDoc(doc(db, 'users', data.authorId), { totalVotes: increment(upD - dnD) });
+    if (data.authorId === currentUser?.uid) {
+      currentUserData.totalVotes = (currentUserData.totalVotes||0) + upD - dnD;
+      showVerifiedSection();
+    }
+  } catch(e) { showToast('Gagal vote', 'error'); }
+};
+
+// ── COMMENTS ──
+window.toggleComments = async (memeId, btn) => {
+  const section = document.getElementById(`comments_${memeId}`);
+  section.classList.toggle('open');
+  if (section.classList.contains('open')) {
+    loadComments(memeId);
+  }
+};
+async function loadComments(memeId) {
+  const list = document.getElementById(`clist_${memeId}`);
+  list.innerHTML = '<div style="color:var(--text3);font-size:13px;font-weight:700;padding:8px 0;">Memuat...</div>';
+  try {
+    const q = query(collection(db, 'memes', memeId, 'comments'), orderBy('createdAt','asc'), limit(20));
+    const snap = await getDocs(q);
+    if (snap.empty) { list.innerHTML = '<div style="color:var(--text3);font-size:13px;font-weight:700;padding:8px 0;">Belum ada komentar. Jadilah yang pertama!</div>'; return; }
+    list.innerHTML = '';
+    snap.forEach(d => { list.appendChild(renderComment(d.data())); });
+  } catch(e) { list.innerHTML = '<div style="color:var(--red);font-size:13px;">Gagal memuat komentar</div>'; }
+}
+function renderComment(data) {
+  const div = document.createElement('div');
+  div.className = 'comment-item';
+  const initials = data.authorName?.[0]?.toUpperCase() || '?';
+  div.innerHTML = `
+    <div class="comment-avatar">${initials}</div>
+    <div class="comment-body">
+      <div class="comment-user">
+        ${escHtml(data.authorName)}
+        ${data.authorVerified ? '<span class="badge-verified">✓</span>' : ''}
+      </div>
+      <div class="comment-text">${escHtml(data.text)}</div>
+      <div class="comment-time">${getTimeAgo(data.createdAt?.toDate?.() || new Date())}</div>
+    </div>
+  `;
+  return div;
+}
+window.sendComment = async (memeId) => {
+  if (!currentUser) { showToast('Login dulu!', 'error'); openModal('login'); return; }
+  const input = document.getElementById(`cinput_${memeId}`);
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  try {
+    await addDoc(collection(db, 'memes', memeId, 'comments'), {
+      text, authorId: currentUser.uid,
+      authorName: currentUserData?.username || currentUser.email.split('@')[0],
+      authorVerified: currentUserData?.verified || false,
+      createdAt: serverTimestamp()
+    });
+    await updateDoc(doc(db, 'memes', memeId), { comments: increment(1) });
+    const countEl = document.getElementById(`cmt_${memeId}`);
+    if (countEl) countEl.textContent = parseInt(countEl.textContent||'0') + 1;
+    loadComments(memeId);
+    showToast('Komentar terkirim! 💬', 'success');
+  } catch(e) { showToast('Gagal kirim komentar', 'error'); }
+};
+
+// ── LEADERBOARD ──
+async function loadLeaderboard() {
+  const el = document.getElementById('leaderboard');
+  try {
+    const q = query(collection(db, 'users'), orderBy('totalVotes','desc'), limit(5));
+    const snap = await getDocs(q);
+    if (snap.empty) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;font-weight:700;">Belum ada data</div>'; return; }
+    el.innerHTML = '';
+    const rankEmoji = ['🥇','🥈','🥉','4.','5.'];
+    const rankClass = ['gold','silver','bronze','',''];
+    let i = 0;
+    snap.forEach(d => {
+      const data = d.data();
+      el.innerHTML += `
+        <div class="leaderboard-item">
+          <div class="rank ${rankClass[i]}">${rankEmoji[i]}</div>
+          <div class="avatar" style="width:30px;height:30px;font-size:12px;background:linear-gradient(135deg,var(--accent),var(--purple));flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;">
+            ${data.username?.[0]?.toUpperCase()||'?'}
+          </div>
+          <div class="lb-user">
+            <div class="lb-name">
+              ${escHtml(data.username||'User')}
+              ${data.verified ? '<span class="badge-verified">✓</span>' : ''}
+            </div>
+            <div class="lb-points">${data.memeCount||0} meme</div>
+          </div>
+          <div class="lb-pts">${data.totalVotes||0} 🔥</div>
+        </div>
+      `;
+      i++;
+    });
+  } catch(e) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;">-</div>'; }
+}
+
+// ── STATS ──
+let totalVotesAll = 0;
+async function loadStats() {
+  try {
+    const snap = await getDocs(collection(db, 'memes'));
+    let votes = 0;
+    snap.forEach(d => { votes += (d.data().upvotes||0); });
+    document.getElementById('statTotal').textContent = snap.size;
+    document.getElementById('statOnline').textContent = Math.floor(Math.random()*50)+10;
+    document.getElementById('statVotes').textContent = votes;
+    totalVotesAll = votes;
+  } catch(e) {}
+}
+function updateStats(count) {
+  document.getElementById('statTotal').textContent = count;
+}
+
+// ── SORT ──
+window.setSort = (sort, btn) => {
+  currentSort = sort;
+  document.querySelectorAll('.nav-tab,.sort-btn,.sidebar-menu-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadMemes();
+};
+window.filterCategory = (cat) => {
+  showToast(`Filter: ${cat} (coming soon)`, 'success');
+};
+window.openProfile = () => {
+  document.getElementById('userMenu').classList.remove('open');
+  showToast('Fitur profil segera hadir! 🚧');
+};
+window.shareMeme = (id, title) => {
+  if (navigator.share) {
+    navigator.share({ title: 'MeméKu - ' + title, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => showToast('Link tersalin! 📋', 'success'));
+  }
+};
+window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+// ── MODAL ──
+window.openModal = (name) => {
+  if (name === 'upload' && !currentUser) { openModal('login'); return; }
+  document.getElementById(`modal${cap(name)}`).classList.add('open');
+};
+window.closeModal = (name) => { document.getElementById(`modal${cap(name)}`).classList.remove('open'); };
+window.switchModal = (from, to) => { closeModal(from); openModal(to); };
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', (e) => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ── HELPERS ──
+function cap(s) { return s[0].toUpperCase() + s.slice(1); }
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function getTimeAgo(date) {
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000);
+  if (diff < 60) return 'baru saja';
+  if (diff < 3600) return Math.floor(diff/60) + ' menit lalu';
+  if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+  if (diff < 604800) return Math.floor(diff/86400) + ' hari lalu';
+  return Math.floor(diff/604800) + ' minggu lalu';
+}
+window.showToast = (msg, type='') => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.className = '', 3000);
+};
+</script>
+</body>
+</html>
